@@ -101,11 +101,11 @@ class SvgMask extends Component<Props, State> {
 
   render() {
     return (
-      <View pointerEvents="box-none" style={this.props.style} onLayout={this.handleLayout}>
+      <View pointerEvents="none" style={this.props.style} onLayout={this.handleLayout}>
         {
           this.state.canvasSize
             ? (
-              <Svg pointerEvents="none" width={this.state.canvasSize.x} height={this.state.canvasSize.y}>
+              <Svg width={this.state.canvasSize.x} height={this.state.canvasSize.y}>
                 <AnimatedSvgPath
                   ref={(ref) => { this.mask = ref; }}
                   fill={this.props.backdropColor}

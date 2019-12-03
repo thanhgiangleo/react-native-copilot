@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { Animated, Easing, View, NativeModules, Modal, StatusBar, Platform } from 'react-native';
+import { Animated, Easing, View, NativeModules, Modal, StatusBar, Platform, TouchableOpacity, Text } from 'react-native';
 import Tooltip from './Tooltip';
 import StepNumber from './StepNumber';
 import styles, { MARGIN, ARROW_SIZE, STEP_NUMBER_DIAMETER, STEP_NUMBER_RADIUS } from './style';
@@ -39,7 +39,9 @@ type State = {
   },
 };
 
-const noop = () => {};
+const noop = () => {
+  this.props.stop();
+};
 
 class CopilotModal extends Component<Props, State> {
   static defaultProps = {
@@ -90,7 +92,6 @@ class CopilotModal extends Component<Props, State> {
       }));
     }
 
-
     return new Promise((resolve) => {
       const setLayout = () => {
         if (this.layout.width !== 0) {
@@ -134,12 +135,15 @@ class CopilotModal extends Component<Props, State> {
     const tooltip = {};
     const arrow = {};
 
+    console.log('verticalPosition', verticalPosition);
+    console.log('horizontalPosition', verticalPosition);
+
     if (verticalPosition === 'bottom') {
       tooltip.top = obj.top + obj.height + MARGIN;
       arrow.borderBottomColor = '#fff';
       arrow.top = tooltip.top - (ARROW_SIZE * 2);
     } else {
-      tooltip.bottom = layout.height - (obj.top - MARGIN);
+      tooltip.bottom = layout.height - (obj.top - MARGIN) + 8;
       arrow.borderTopColor = '#fff';
       arrow.bottom = tooltip.bottom - (ARROW_SIZE * 2);
     }
@@ -291,19 +295,27 @@ class CopilotModal extends Component<Props, State> {
 
     return (
       <Modal
-        animationType="none"
+        animationType="fade"
         visible={containerVisible}
-        onRequestClose={noop}
+        onRequestClose={() => this.props.stop()}
         transparent
         supportedOrientations={['portrait', 'landscape']}
       >
-        <View
-          style={styles.container}
-          onLayout={this.handleLayoutChange}
+        <TouchableOpacity
+          style={{ flex: 1, justifyContent: 'center' }}
+          activeOpacity={1}
+          onPress={() => {
+            this.props.stop();
+          }}
         >
-          {contentVisible && this.renderMask()}
-          {contentVisible && this.renderTooltip()}
-        </View>
+          <View
+            style={styles.container}
+            onLayout={this.handleLayoutChange}
+          >
+            {contentVisible && this.renderMask()}
+            {contentVisible && this.renderTooltip()}
+          </View>
+        </TouchableOpacity>
       </Modal>
     );
   }
